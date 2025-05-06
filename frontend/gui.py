@@ -6,6 +6,9 @@ from backend.database import add_transaction, get_transactions
 from plots import plot_expenses
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from PIL import Image, ImageTk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from plots import plot_expenses
+from backend.database import get_transactions
 
 class BudgetApp:
     def __init__(self, root, logged_in_user):
@@ -156,22 +159,32 @@ class BudgetApp:
         self.set_background("../utils/bg_add_transaction.jpg")
 
         try:
-            transactions = get_transactions(self.user)
-            fig = plot_expenses(transactions)
+            for widget in self.root.winfo_children():
+                if isinstance(widget, FigureCanvasTkAgg):
+                    widget.get_tk_widget().destroy()
+
+            transactions = [
+                [txn.id, txn.user_id, txn.amount, txn.type, txn.date, txn.category]
+                for txn in get_transactions(self.user.id)
+            ]
+
+            fig = plot_expenses(transactions)  # ✅ No filter_type
             canvas = FigureCanvasTkAgg(fig, master=self.root)
             canvas.draw()
-            canvas.get_tk_widget().place(x=150, y=100)
+            canvas.get_tk_widget().place(x=100, y=107)
+
         except Exception as e:
             print("Error in summary screen:", e)
-            tk.Label(self.root, text="Could not display chart", font=("Times New Roman", 50, "bold"),
-                      background="white", foreground="light blue").place(relx=0.5, rely=0.5, anchor="center")
+            tk.Label(self.root, text="Could not display chart", font=("Times New Roman", 30, "bold"),
+                     background="white", foreground="light blue").place(relx=0.5, rely=0.5, anchor="center")
 
+        # ✅ Only Back button remains
         back_button = tk.Button(self.root, text="Back",
-                                font=("Times New Roman", 20, "bold"),
+                                font=("Times New Roman", 14, "bold"),
                                 bg="white", fg="black",
-                                width=15, height=2,
+                                width=12, height=3,
                                 borderwidth=0, relief="ridge",
                                 highlightbackground="#ccc", highlightthickness=2,
                                 command=self.create_home)
-        back_button.place(x=450, y=600)
+        back_button.place(x=500, y=620)
 
