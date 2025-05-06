@@ -117,6 +117,9 @@ def show_register_form(root):
             users = get_users()
             for user in users:
                 if user.name == name:
+                    messagebox.showinfo("Registration Successful",
+                                        f"Your account has been created.\nYour User ID is: {user.id}\nPlease remember this ID and your password to log in next time. Thank you!",
+                                        parent=register_form)
                     register_form.destroy()
                     root.deiconify()
                     BudgetApp(root, logged_in_user=user)
