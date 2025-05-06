@@ -29,7 +29,7 @@ class BudgetApp:
         self.bg_label.place(x=0, y=0, relwidth=1, relheight=1)
 
     def restart_app(self):
-        self.__init__(self.root)
+        self.__init__(self.root, self.user)
 
     def create_welcome(self):
         self.clear()
@@ -45,13 +45,14 @@ class BudgetApp:
             relief="ridge",
             highlightbackground="#ccc",
             highlightthickness=0,
-            command=self.create_add_transaction
+            command=self.create_home
         )
         start_button.place(x=425, y=500)
 
     def create_home(self):
+        self.set_background("../utils/bg_add_transaction.jpg")
         self.clear()
-        ttk.Label(self.root, text="Transaction Successfully Saved!!!", font=("Times New Roman", 30, "bold"), background="white").place(x=320, y=180)
+        tk.Label(self.root, text="Add Transaction or View Summary", font=("Times New Roman", 30, "bold"), background="white", foreground="black").place(x=330, y=180)
         add_button = tk.Button(self.root, text="Add New Transaction",
                                font=("Times New Roman", 20, "bold"),
                                bg="white", fg="black",
@@ -72,16 +73,16 @@ class BudgetApp:
     def create_add_transaction(self):
         self.set_background("../utils/bg_add_transaction.jpg")
         self.clear()
-        ttk.Label(self.root, text="Add New Transaction", font=("Times New Roman", 30, "bold"), background="white").place(x=400, y=160)
+        tk.Label(self.root, text="Add New Transaction", font=("Times New Roman", 30, "bold"), background="white", foreground="black").place(x=400, y=160)
 
         labels_font = ("Times New Roman", 20, "bold")
         entry_font = ("Times New Roman", 20)
 
-        ttk.Label(self.root,
+        tk.Label(self.root,
             text="Date (YYYY-MM-DD):",
             font=labels_font,
             background="white",
-            #foreground="black"  # Make sure text is black
+            foreground="black"
         ).place(x=300, y=250)
         # Entry (input box)
         self.date_entry = tk.Entry(
@@ -98,16 +99,12 @@ class BudgetApp:
         self.date_entry.place(x=620, y=250)
         self.date_entry.insert(0, datetime.now().strftime("%Y-%m-%d"))
 
-        ttk.Label(self.root, text="Amount:", font=labels_font, background="white").place(x=300, y=320)
-        self.amount_entry = ttk.Entry(self.root, font=entry_font, width=25)
+        tk.Label(self.root, text="Amount:", font=labels_font, background="white", foreground="black").place(x=300, y=320)
+        self.amount_entry = tk.Entry(self.root, font=entry_font, background="white", foreground="black", width=25)
         self.amount_entry.place(x=620, y=320)
 
-        # ttk.Label(self.root, text="Category:", font=labels_font, background="white").place(x=300, y=390)
-        # self.category_entry = ttk.Entry(self.root, font=entry_font, width=25)
-        # self.category_entry.place(x=620, y=390)
-
-        ttk.Label(self.root, text="Type (Expense/Income):", font=labels_font, background="white").place(x=300, y=460)
-        self.type_entry = ttk.Entry(self.root, font=entry_font, width=25)
+        tk.Label(self.root, text="Type (Expense/Income):", font=labels_font, background="white", foreground="black").place(x=300, y=460)
+        self.type_entry = tk.Entry(self.root, font=entry_font, background="white", foreground="black", width=25)
         self.type_entry.place(x=620, y=460)
         save_button = tk.Button(self.root, text="Save",
                                 font=("Times New Roman", 20, "bold"),
@@ -124,7 +121,7 @@ class BudgetApp:
                                 width=10, height=2,
                                 borderwidth=0, relief="ridge",
                                 highlightbackground="#ccc", highlightthickness=0,
-                                command=self.restart_app)
+                                command=self.create_home)
         back_button.place(x=360, y=560)
 
     def save_transaction(self):
@@ -151,11 +148,18 @@ class BudgetApp:
 
     def create_summary(self):
         self.clear()
-        transactions = get_transactions(self.user)
-        fig = plot_expenses(transactions)
-        canvas = FigureCanvasTkAgg(fig, master=self.root)
-        canvas.draw()
-        canvas.get_tk_widget().place(x=300, y=120)
+        self.set_background("../utils/bg_add_transaction.jpg")
+
+        try:
+            transactions = get_transactions(self.user)
+            fig = plot_expenses(transactions)
+            canvas = FigureCanvasTkAgg(fig, master=self.root)
+            canvas.draw()
+            canvas.get_tk_widget().place(x=150, y=100)
+        except Exception as e:
+            print("Error in summary screen:", e)
+            tk.Label(self.root, text="Could not display chart", font=("Times New Roman", 50, "bold"),
+                      background="white", foreground="light blue").place(relx=0.5, rely=0.5, anchor="center")
 
         back_button = tk.Button(self.root, text="Back",
                                 font=("Times New Roman", 20, "bold"),
@@ -164,5 +168,5 @@ class BudgetApp:
                                 borderwidth=0, relief="ridge",
                                 highlightbackground="#ccc", highlightthickness=2,
                                 command=self.create_home)
-        back_button.place(x=500, y=600)
+        back_button.place(x=450, y=600)
 
