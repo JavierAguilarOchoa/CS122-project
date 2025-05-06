@@ -103,6 +103,10 @@ class BudgetApp:
         self.amount_entry = tk.Entry(self.root, font=entry_font, background="white", foreground="black", width=25)
         self.amount_entry.place(x=620, y=320)
 
+        tk.Label(self.root, text="Category:", font=labels_font, background="white", foreground="black").place(x=300, y=390)
+        self.category_entry = tk.Entry(self.root, font=entry_font, background="white", foreground="black", width=25)
+        self.category_entry.place(x=620, y=390)
+
         tk.Label(self.root, text="Type (Expense/Income):", font=labels_font, background="white", foreground="black").place(x=300, y=460)
         self.type_entry = tk.Entry(self.root, font=entry_font, background="white", foreground="black", width=25)
         self.type_entry.place(x=620, y=460)
@@ -129,6 +133,7 @@ class BudgetApp:
         amount = self.amount_entry.get()
         type_ = self.type_entry.get().capitalize()
         date = self.date_entry.get()
+        category = self.category_entry.get().capitalize()
 
         try:
             amount = float(amount)
@@ -137,7 +142,7 @@ class BudgetApp:
             if type_ not in ["Expense", "Income"]:
                 raise ValueError("Invalid Type entered, transaction type must be 'Income' or 'Expense'.")
 
-            success, msg = add_transaction(self.user.id, amount, type_, date)
+            success, msg = add_transaction(self.user.id, amount, type_, date, category)
             if success:
                 messagebox.showinfo("Success", msg)
                 self.create_home()

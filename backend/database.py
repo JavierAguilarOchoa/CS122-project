@@ -26,6 +26,7 @@ class Transaction(Base):
     amount = Column(Float, nullable=False)
     type = Column(String, nullable=False) # 'income' or 'expense'
     date = Column(Date, default=datetime.date.today(), nullable=False)
+    category = Column(String, nullable=False)
 
     user = relationship("User", back_populates="transactions")
 
@@ -94,7 +95,7 @@ def verify_login(user_id, password):
 
 
 # ----------Database functions for transactions----------(Might just want the add/look over this as project implementation continues)
-def add_transaction(trans_user_id, new_amount, trans_type, trans_date): #TODO make sure that trans_user_id does not have to be inputted from a user's pov(Under the hood)
+def add_transaction(trans_user_id, new_amount, trans_type, trans_date, trans_category): #TODO make sure that trans_user_id does not have to be inputted from a user's pov(Under the hood)
     # INSERT INTO
     with Session() as session:
         try:
@@ -102,7 +103,8 @@ def add_transaction(trans_user_id, new_amount, trans_type, trans_date): #TODO ma
                 user_id=trans_user_id,
                 amount = new_amount,
                 type = trans_type,
-                date = trans_date
+                date = trans_date,
+                category = trans_category
             )
             session.add(new_trans)
             session.commit()
