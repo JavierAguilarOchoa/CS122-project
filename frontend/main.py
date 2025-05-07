@@ -1,12 +1,13 @@
-# Launches the app
-# TODO Include proper documentation in the form of docstrings for classes, functions, and methods.
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
+"""Main entry point for the BudgetBuddy application"""
 from auth import launch
 
 def main():
+    """
+    Starts the BudgetBuddy application.
+
+    This function prints a startup message, launches the authentication UI,
+    and prints an exit message after the authentication window is closed.
+    """
     print('Program started')
     launch()
     print('program exited')

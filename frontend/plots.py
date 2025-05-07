@@ -1,41 +1,32 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
-
-"""def plot_expenses(transactions):
-    expenses = {}
-    for t in transactions:
-        # Defensive unpacking
-        try:
-            # Adjust the unpacking to match your actual tuple structure
-            _, _, _, amount, category, type_ = t
-            if type_ == "Expense":
-                expenses[category] = expenses.get(category, 0) + amount
-        except Exception as e:
-            print("Skipping invalid transaction:", t, "Error:", e)
-            continue
-
-    fig, ax = plt.subplots()
-    if expenses:
-        ax.pie(expenses.values(), labels=expenses.keys(), autopct='%1.1f%%')
-        ax.set_title("Expenses by Category")
-    else:
-        ax.text(0.5, 0.5, "No Data", ha='center', va='center', fontsize=12)
-        ax.set_axis_off()
-
-    return fig """
 import pandas as pd
-import matplotlib.pyplot as plt
 import numpy as np
 from datetime import datetime
 
 
 def plot_expenses(transactions):
+    """
+      Plots a visual summary of income and expense transactions by category.
+
+      This function generates a bar chart comparing income and expense amounts
+      across different categories, and a pie chart showing the overall distribution
+      of total transaction amounts per category.
+
+      Args:
+          transactions (list of tuples): A list of transaction records, where each
+              record is a tuple with the format:
+              (id, user_id, amount, type, date, category)
+
+      Returns:
+          matplotlib.figure.Figure: The matplotlib Figure object containing the plots.
+      """
     df = pd.DataFrame(transactions, columns=["id", "user_id", "amount", "type", "date", "category"])
     df['type'] = df['type'].str.capitalize()
     df['category'] = df['category'].str.capitalize()
     df['date'] = pd.to_datetime(df['date'])
 
-    # Group by category and type (Income vs Expense)
+    # Group by category and type (Income or Expense)
     grouped = df.groupby(['category', 'type'])['amount'].sum().unstack(fill_value=0)
 
     if grouped.empty:

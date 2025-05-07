@@ -9,14 +9,30 @@ from PIL import Image, ImageTk
 
 #-----------Launches authorization and opens app once user logs in or creates account-----------
 def launch():
+    """
+     Launches the initial authentication window for the BudgetBuddy application.
+
+     Presents users with options to either log in or register a new account.
+     Upon successful authentication, launches the main application!
+     """
     root = tk.Tk()
     root.withdraw()
 
     def on_login():
+        """
+        This is a callback function that is called when the user logs in
+
+        Closes the login window and opens the login form to allow users to input their credentials.
+        """
         login_window.destroy()
         show_login_form(root)
 
     def on_register():
+        """
+        This is a callback function that is called when the user wants to register (Creates new user)
+
+        Closes the welcome/login window and opens the registration form to allow users to create a new account.
+        """
         login_window.destroy()
         show_register_form(root)
 
@@ -46,13 +62,39 @@ def launch():
     login_window.mainloop()
 
 def get_user_by_id(user_id):
+    """
+      Retrieves a user from the database by their user ID.
+
+      Args:
+          user_id (int): The ID of the user to retrieve.
+
+      Returns:
+          User: SQLAlchemy User object if found, else None.
+      """
     with Session() as session:
         return session.query(User).filter(User.id == user_id).first()
 
 def prompt(root):
+    """
+     Displays a dialog asking the user whether they want to log in or register.
+
+     Args:
+         root (tk.Tk): The parent Tkinter window.
+
+     Returns:
+         str: 'yes' if the user wants to log in, 'no' otherwise.
+     """
     return messagebox.askquestion("Welcome", "Do you want to log in?\n(Click 'No' to create a new user)", parent=root)
 
 def show_login_form(root):
+    """
+      Opens a login window where users enter their user ID and password.
+
+      On successful login, launches the BudgetApp GUI for the logged-in user.
+
+      Args:
+          root (tk.Tk): The main Tkinter root window.
+      """
     login_form = tk.Toplevel(root)
     login_form.title("Login")
     login_form.geometry("400x250")
@@ -70,6 +112,15 @@ def show_login_form(root):
     password_entry.pack(pady=5)
 
     def attempt_login():
+        """
+            Handles the login process when the "Login" button is clicked.
+
+            Retrieves the user ID and password from the input fields, validates that the user ID is an integer,
+            and verifies credentials using the `verify_login` function. If the login is successful,
+            it retrieves the corresponding user object, closes the login form, and opens the BudgetApp interface.
+
+            Displays appropriate error messages for invalid credentials or incorrect input types.
+            """
         user_id = user_id_entry.get()
         password = password_entry.get()
 
@@ -88,7 +139,16 @@ def show_login_form(root):
 
     tk.Button(login_form, text="Login", font=("Times New Roman", 12), command=attempt_login).pack(pady=15)
 
+
 def show_register_form(root):
+    """
+       Opens a registration window where users can create a new account.
+
+       Prompts for name and password. On success, shows the user ID and launches BudgetApp.
+
+       Args:
+           root (tk.Tk): The main Tkinter root window.
+       """
     register_form = tk.Toplevel(root)
     register_form.title("Create Account")
     register_form.geometry("400x300")
@@ -105,7 +165,17 @@ def show_register_form(root):
     password_entry = tk.Entry(register_form, show='*', font=("Times New Roman", 12))
     password_entry.pack(pady=5)
 
+
     def attempt_register():
+        """
+            Handles user registration logic when the "Register" button is clicked.
+
+            Validates the input fields (name and password), creates a new user with an initial balance of 0,
+            and retrieves the user ID upon successful registration. If registration succeeds,
+            it displays the user ID in a messagebox and launches the BudgetApp interface.
+
+            Displays error messages for missing input fields or failed registration attempts.
+            """
         name = name_entry.get()
         password = password_entry.get()
         if not name or not password:
@@ -130,8 +200,16 @@ def show_register_form(root):
     tk.Button(register_form, text="Register", font=("Times New Roman", 12), command=attempt_register).pack(pady=15)
 
 
-
 def window_background(form):
+    """
+        Applies a background image to a given Tkinter form.
+
+        Args:
+            form (tk.Toplevel): The window to set the background for.
+
+        Note:
+            The image must exist at "../utils/login_background.jpg".
+        """
     bg_image = Image.open("../utils/login_background.jpg")
     bg_photo = ImageTk.PhotoImage(bg_image)
     form.bg_photo = bg_photo
