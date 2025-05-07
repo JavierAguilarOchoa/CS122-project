@@ -1,4 +1,3 @@
-# TODO Include proper documentation in the form of docstrings for classes, functions, and methods.
 import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog
 from datetime import datetime
