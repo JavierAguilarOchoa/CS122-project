@@ -1,6 +1,5 @@
 import unittest
 from backend.database import Base, User, Transaction, get_transactions, add_user, add_transaction, get_transactions, get_users
-from datetime import datetime
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from datetime import date
@@ -44,6 +43,37 @@ class TestBudgetBuddy(unittest.TestCase):
         success, msg = add_transaction(user.id, 50.0, "Expense", date.today(), "Food")
         self.assertTrue(success)
         self.assertIn("added", msg)
+
+    def test_get_users(self):
+        """
+        Test that get_users returns all users in the database.
+        """
+        add_user("Javier", 500, "pwJavi")
+        add_user("Hardik", 1000, "pwHardik")
+
+        users = get_users()
+        usernames = [user.name for user in users]
+        self.assertIn("Javier", usernames)
+        self.assertIn("Hardik", usernames)
+        self.assertEqual(len(users), 2)
+
+    def test_get_transactions(self):
+        """
+        Test that get_transactions returns all transactions for a given user.
+        """
+        success, _ = add_user("Javi", 300, "Pw")
+        self.assertTrue(success)
+        user = self.session.query(User).filter_by(name="Javi").first()
+        self.assertIsNotNone(user)
+
+        add_transaction(user.id, 100.0, "Income", date.today(), "Bonus")
+        add_transaction(user.id, 30.0, "Expense", date.today(), "Transport")
+
+        transactions = get_transactions(user.id)
+        self.assertEqual(len(transactions), 2)
+        categories = {t.category for t in transactions}
+        self.assertIn("Bonus", categories)
+        self.assertIn("Transport", categories)
 
 if __name__ == '__main__':
     unittest.main()
